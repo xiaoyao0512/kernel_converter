@@ -1,22 +1,20 @@
 __kernel void A(const __global float* a, const __global float* b, uint c, uint d, __global float* e, __local float* f) {
-  int z = get_group_id(0);
-  int aa = get_local_id(0);
-  for (uint g = z; g < d; g += get_num_groups(0)) {
+  for (uint g = get_group_id(0); g < d; g += get_num_groups(0)) {
     const __global float* h = a + g * c;
 
     float i = 0;
-    for (uint j = aa; j < c; j += get_local_size(0))
+    for (uint j = get_local_id(0); j < c; j += get_local_size(0))
       i += h[j] * b[j];
 
-    f[aa] = i;
+    f[get_local_id(0)] = i;
 
     barrier(1);
 
-    uint k = aa & (32 - 1);
+    uint k = get_local_id(0) & (32 - 1);
 
     float l = 0.0f;
-    if (aa < get_local_size(0) / 2) {
-      volatile __local float* m = f + 2 * aa - k;
+    if (get_local_id(0) < get_local_size(0) / 2) {
+      volatile __local float* m = f + 2 * get_local_id(0) - k;
       m[0] += m[32];
       m[0] += m[16];
       m[0] += m[8];
@@ -36,7 +34,7 @@ __kernel void A(const __global float* a, const __global float* b, uint c, uint d
     uint n = get_local_size(0) / (2 * 32);
 
     if (get_local_id(0) < n / 2) {
-      volatile __local float* m = f + aa;
+      volatile __local float* m = f + get_local_id(0);
       if (n >= 8)
         m[0] += m[4];
       if (n >= 4)
@@ -45,7 +43,7 @@ __kernel void A(const __global float* a, const __global float* b, uint c, uint d
         m[0] += m[1];
     }
 
-    if (aa == 0)
+    if (get_local_id(0) == 0)
       e[g] = f[0];
 
     barrier(1);

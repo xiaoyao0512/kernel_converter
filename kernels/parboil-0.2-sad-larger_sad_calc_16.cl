@@ -1,6 +1,6 @@
 __kernel void A(__global unsigned short* a, int b, int c) {
-  int d = get_global_id(0);
-  int e = get_global_id(1);
+  int d = get_group_id(0);
+  int e = get_group_id(1);
 
   int f = mul24(b, c) * 1024;
   int g = (mul24(e, b) + d) * 1024;

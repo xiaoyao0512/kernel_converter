@@ -1,13 +1,10 @@
 __kernel void A(__global int* a, __global int* b, __global float2* c, __global float2* d, __global int* e, __global int* f, __global int* g, int h, int i, int j, __local int* k, __local int* l, __local int* m) {
-  
-  int n = get_global_id(0);
-  int zz = get_local_id(0);
-  if (zz == 0) {
+  if (get_local_id(0) == 0) {
     *k = 0;
   }
   barrier(1);
 
-  
+  int n = get_global_id(0);
 
   if (n < h) {
     int o = a[n];
@@ -38,14 +35,14 @@ __kernel void A(__global int* a, __global int* b, __global float2* c, __global f
   }
   barrier(1);
 
-  if (zz == 0) {
+  if (get_local_id(0) == 0) {
     int y = *k;
 
     *m = atom_add(g, y);
   }
   barrier(1);
 
-  int z = zz;
+  int z = get_local_id(0);
 
   while (z < *k) {
     b[*m + z] = l[z];

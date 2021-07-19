@@ -1,6 +1,4 @@
 __kernel void A(__global float* a, __global float* b, __global float* c, __local float* d, __local float* e, int f, int g, int h) {
-  int aa = get_global_id(0);
-  int bb = get_global_id(1);
   int i = get_group_id(0);
   int j = get_group_id(1);
 
@@ -31,8 +29,8 @@ __kernel void A(__global float* a, __global float* b, __global float* c, __local
     barrier(1);
   }
 
-  if (bb < h)
+  if (get_global_id(1) < h)
 
-    a[bb * get_global_size(0) + aa] = r;
+    a[get_global_id(1) * get_global_size(0) + get_global_id(0)] = r;
 }
 

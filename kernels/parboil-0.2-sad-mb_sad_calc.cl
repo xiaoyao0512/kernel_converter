@@ -1,5 +1,5 @@
-__kernel void A(__global unsigned short* a, __global unsigned short* b, int c, int d) {
-  //const sampler_t f;
+__kernel void A(__global unsigned short* a, __global unsigned short* b, int c, int d, __read_only image2d_t e) {
+  const sampler_t f;
 
   int g = (get_local_id(0) / 32) % 128;
   int h = (get_local_id(0) / 32) / 128;

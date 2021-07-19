@@ -1,6 +1,5 @@
 __kernel void A(const __global float* a, const __global float* b, uint c, uint d, __global float* e) {
-  uint k = get_global_id(0);
-  for (uint f = k; f < d; f += get_global_size(0)) {
+  for (uint f = get_global_id(0); f < d; f += get_global_size(0)) {
     const __global float* g = a + f * c;
 
     float h = 0;

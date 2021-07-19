@@ -19,7 +19,7 @@ __kernel void A(__global double* a, __constant double* b, __global double* c, __
       n = (double)i * (1.0 / (double)(12 - 1));
       for (h = 0; h < e; h++) {
         m = (double)h * (1.0 / (double)(12 - 1));
-        //A(m, n, o, p, b);
+        A(m, n, o, p, b);
 
         for (k = 0; k < 5; k++) {
           q = s[j][i][h][k] - p[k];
