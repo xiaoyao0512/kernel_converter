@@ -7,21 +7,19 @@ __kernel void A(__global const uint* a, __global const uint* b, __global uint* c
 
   __global uint4* j = (__global uint4*)a;
   __global uint4* k = (__global uint4*)c;
-  int aa = get_group_id(0);
-  int bb = get_local_id(0);
   int l = d / 4;
 
   int m = l / get_num_groups(0);
-  int n = aa * m;
+  int n = get_group_id(0) * m;
 
-  int o = (aa == get_num_groups(0) - 1) ? l : n + m;
+  int o = (get_group_id(0) == get_num_groups(0) - 1) ? l : n + m;
 
   int p = n + get_local_id(0);
   int q = n;
 
   if (get_local_id(0) < 16) {
     h[get_local_id(0)] = 0;
-    g[get_local_id(0)] = b[(get_local_id(0) * get_num_groups(0)) + aa];
+    g[get_local_id(0)] = b[(get_local_id(0) * get_num_groups(0)) + get_group_id(0)];
   }
   barrier(1);
 

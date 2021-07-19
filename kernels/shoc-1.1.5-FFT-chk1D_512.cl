@@ -1,8 +1,6 @@
 __kernel void A(__global float2* a, int b, __global int* c) {
-  int d;
-  int e = get_local_id(0);
+  int d, e = get_local_id(0);
   int f = get_group_id(0) * 512 + e;
-  
   float2 g[8], h[8];
 
   a = a + f;

@@ -1,6 +1,6 @@
 __kernel void A(__global double* a, int b) {
   int c = get_global_id(0);
-  unsigned int d = get_local_size(0);
+  unsigned d = get_local_size(0);
 
   if (c == 0) {
     int e;

@@ -1,10 +1,8 @@
 __kernel void A(__global const float* a, __global float* b, const int c, __local float* d) {
-  
-  int z = get_group_id(0);
   int e = ((c / 4) / get_num_groups(0)) * 4;
-  int f = z * e;
+  int f = get_group_id(0) * e;
 
-  int g = (z == get_num_groups(0) - 1) ? c : f + e;
+  int g = (get_group_id(0) == get_num_groups(0) - 1) ? c : f + e;
 
   int h = get_local_id(0);
   int i = f + h;
@@ -17,18 +15,18 @@ __kernel void A(__global const float* a, __global float* b, const int c, __local
   }
 
   d[h] = j;
-  //barrier(1);
+  barrier(1);
 
   for (unsigned int k = get_local_size(0) / 2; k > 0; k >>= 1) {
     if (h < k) {
       d[h] += d[h + k];
     }
-    //barrier(1);
+    barrier(1);
   }
 
-  //barrier(1);
+  barrier(1);
 
   if (h == 0) {
-    b[z] = d[0];
+    b[get_group_id(0)] = d[0];
   }
 }

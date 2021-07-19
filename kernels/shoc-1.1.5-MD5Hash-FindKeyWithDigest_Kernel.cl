@@ -1,6 +1,5 @@
 __kernel void A(unsigned int a, unsigned int b, unsigned int c, unsigned int d, int e, int f, int g, __global int* h, __global unsigned char* i, __global unsigned int* j) {
-  int z = get_global_id(0);
-  int k = (z * get_local_size(0)) + get_local_id(0);
+  int k = (get_group_id(0) * get_local_size(0)) + get_local_id(0);
 
   int l = k * g;
   unsigned char m[8] = {0, 0, 0, 0, 0, 0, 0, 0};

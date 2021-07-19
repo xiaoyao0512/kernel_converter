@@ -1,9 +1,8 @@
 __kernel void A(__global const uint* a, __global uint* b, const int c, __local uint* d, const int e) {
-  int z = get_global_id(0);
   int f = ((c / 4) / get_num_groups(0)) * 4;
-  int g = z * f;
+  int g = get_group_id(0) * f;
 
-  int h = (z == get_num_groups(0) - 1) ? c : g + f;
+  int h = (get_group_id(0) == get_num_groups(0) - 1) ? c : g + f;
 
   int i = get_local_id(0);
   int j = g + i;
@@ -27,7 +26,7 @@ __kernel void A(__global const uint* a, __global uint* b, const int c, __local u
     }
 
     if (i == 0) {
-      b[(l * get_num_groups(0)) + z] = d[0];
+      b[(l * get_num_groups(0)) + get_group_id(0)] = d[0];
     }
   }
 }

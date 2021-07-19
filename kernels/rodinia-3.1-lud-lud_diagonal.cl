@@ -8,7 +8,7 @@ __kernel void A(__global float* a, __local float* b, int c, int d) {
     h += c;
   }
 
-  //barrier(1);
+  barrier(1);
 
   for (e = 0; e < 64 - 1; e++) {
     if (g > e) {
@@ -17,13 +17,13 @@ __kernel void A(__global float* a, __local float* b, int c, int d) {
       b[g * 64 + e] /= b[e * 64 + e];
     }
 
-    //barrier(1);
+    barrier(1);
     if (g > e) {
       for (f = 0; f < e + 1; f++)
         b[(e + 1) * 64 + g] -= b[(e + 1) * 64 + f] * b[f * 64 + g];
     }
 
-    //barrier(1);
+    barrier(1);
   }
 
   h = (d + 1) * c + d;
