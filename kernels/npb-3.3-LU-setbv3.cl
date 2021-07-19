@@ -1,8 +1,9 @@
 __kernel void A(__global double* a, __global double* b, int c, int d, int e) {
+  int f, g, h;
 
-  int g = get_global_id(2);
-  int f = get_global_id(1);
-  int h = get_global_id(0);
+  g = get_global_id(2);
+  f = get_global_id(1);
+  h = get_global_id(0);
   if (g >= e || f >= d)
     return;
 

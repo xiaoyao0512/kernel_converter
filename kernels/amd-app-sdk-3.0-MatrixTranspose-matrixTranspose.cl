@@ -36,9 +36,9 @@ __kernel void A(__global float4* a, __global float4* b, __local float4* c) {
   float4 t = c[p + l * 2];
   float4 u = c[p + l * 3];
 
-  a[q] = (float4)(r.x, s.x, t.x, u.x);
-  a[q + d] = (float4)(r.y, s.y, t.y, u.y);
-  a[q + d * 2] = (float4)(r.z, s.z, t.z, u.z);
-  a[q + d * 3] = (float4)(r.w, s.w, t.w, u.w);
+  a[q] = (float4)(rx, sx, tx, ux);
+  a[q + d] = (float4)(ry, sy, ty, uy);
+  a[q + d * 2] = (float4)(rz, sz, tz, uz);
+  a[q + d * 3] = (float4)(rw, sw, tw, uw);
 }
 

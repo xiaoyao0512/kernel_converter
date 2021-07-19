@@ -5,7 +5,7 @@ __kernel void A(__global float* a, __global float* b, __local float* c, const ui
 
   c[2 * f] = b[2 * g];
   c[2 * f + 1] = b[2 * g + 1];
-  //barrier(1);
+  barrier(1);
 
   float i = c[0];
   float j = i + c[1];
@@ -15,12 +15,12 @@ __kernel void A(__global float* a, __global float* b, __local float* c, const ui
       i = c[2 * f - k] + c[2 * f];
       j = c[2 * f + 1 - k] + c[2 * f + 1];
     }
-    //barrier(1);
+    barrier(1);
 
     c[2 * f] = i;
     c[2 * f + 1] = j;
 
-    //barrier(1);
+    barrier(1);
   }
 
   e[h] = c[d - 1];

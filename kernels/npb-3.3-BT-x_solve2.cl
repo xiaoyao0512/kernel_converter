@@ -1,12 +1,12 @@
 __kernel void A(__global double* a, int b, int c, int d) {
-  int h, i;
+  int e, f, g, h, i;
 
-  int g = get_global_id(2) + 1;
-  int f = get_global_id(1) + 1;
+  g = get_global_id(2) + 1;
+  f = get_global_id(1) + 1;
   if (g > (d - 2) || f > (c - 2))
     return;
 
-  int e = get_global_id(0);
+  e = get_global_id(0);
   if (e == 1)
     e = b - 1;
 

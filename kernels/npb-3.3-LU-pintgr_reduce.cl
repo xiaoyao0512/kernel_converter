@@ -1,8 +1,8 @@
 __kernel void A(__global double* a, __global double* b, __global double* c, __local double* d, int e, int f, int g, int h) {
   int i, j, k;
   double l = 0.0;
-  int z = get_global_id(0);
-  j = z + g;
+
+  j = get_global_id(0) + g;
   k = get_local_id(0);
 
   if (j < h) {
@@ -15,13 +15,13 @@ __kernel void A(__global double* a, __global double* b, __global double* c, __lo
   }
   d[k] = l;
 
-  //barrier(1);
+  barrier(1);
 
   if (k == 0) {
     for (i = 1; i < get_local_size(0); i++) {
       l += d[i];
     }
 
-    c[z] = l;
+    c[get_group_id(0)] = l;
   }
 }

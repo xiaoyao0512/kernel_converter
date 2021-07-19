@@ -1,29 +1,29 @@
-__kernel void A(int a, const __global float* b, __global float* c, __local float* d, __local float* e) {
-  unsigned int g = get_group_id(0);
+__kernel void A(int a, const __global float4* b, __global float4* c, __local float4* d, __local float4* e) {
   unsigned int f = get_local_id(0);
+  unsigned int g = get_group_id(0);
 
-  float h = b[g];
+  float4 h = b[g];
 
-  float i = (1.0f - h) * 5.0f + h * 30.f;
-  float j = (1.0f - h) * 1.0f + h * 100.f;
-  float k = (1.0f - h) * 0.25f + h * 10.f;
-  float l = k * (1.0f / (float)a);
-  float m = 0.30f * sqrt(l);
-  float n = 0.02f * l;
-  float o = exp(n);
-  float p = 1.0f / o;
-  float q = exp(m);
-  float r = 1.0f / q;
-  float s = (o - r) / (q - r);
-  float t = 1.0f - s;
-  float u = s * p;
-  float v = t * p;
+  float4 i = (1.0f - h) * 5.0f + h * 30.f;
+  float4 j = (1.0f - h) * 1.0f + h * 100.f;
+  float4 k = (1.0f - h) * 0.25f + h * 10.f;
+  float4 l = k * (1.0f / (float)a);
+  float4 m = 0.30f * sqrt(l);
+  float4 n = 0.02f * l;
+  float4 o = exp(n);
+  float4 p = 1.0f / o;
+  float4 q = exp(m);
+  float4 r = 1.0f / q;
+  float4 s = (o - r) / (q - r);
+  float4 t = 1.0f - s;
+  float4 u = s * p;
+  float4 v = t * p;
 
-  float w = i * exp(m * (2.0f * f - (float)a)) - j;
-  //d[f].x = w.x > 0 ? w.x : 0.0f;
-  //d[f].y = w.y > 0 ? w.y : 0.0f;
-  //d[f].z = w.z > 0 ? w.z : 0.0f;
-  //d[f].w = w.w > 0 ? w.w : 0.0f;
+  float4 w = i * exp(m * (2.0f * f - (float)a)) - j;
+  d[f].x = w.x > 0 ? w.x : 0.0f;
+  d[f].y = w.y > 0 ? w.y : 0.0f;
+  d[f].z = w.z > 0 ? w.z : 0.0f;
+  d[f].w = w.w > 0 ? w.w : 0.0f;
 
   barrier(1);
 
