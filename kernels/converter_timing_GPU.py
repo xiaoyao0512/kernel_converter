@@ -749,7 +749,8 @@ for clFile in files:
         filename == "shoc-1_1_5-S3D-ratxb_kernel" or \
         filename == "shoc-1_1_5-S3D-rdsmh_kernel" or \
         filename == "npb-3_3-BT-compute_rhs5" or \
-        filename == "npb-3_3-SP-compute_rhs5"
+        filename == "npb-3_3-SP-compute_rhs5" or \
+        filename == "rodinia-3_1-gaussian-Fan1"
        ): 
         #print "I am here"
         counter += 1
