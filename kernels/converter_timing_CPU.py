@@ -586,36 +586,7 @@ for clFile in files:
     fwC.write("\n}\n")
     fwC.close()
     
-    # Generate C host code for each kernel
-    #print "queue_CHost = ", queue_CHost
-    #print "argOrder_CHost = ", argOrder_CHost
-    CHostCode("AMD", "CPU", clFile, filename, N, iterations, queue_CHost, argOrder_CHost)
-    
-    fname = filename+"_"+"AMD"+"_main_"+"CPU"+".c"
-    #print fname
-    ret = os.system("gcc {} -l OpenCL -std=c99".format(fname))
-    if (ret != 0):
-        print "{}: Something wrong with COMPILATION! Exit the program!".format(fname)
-        fwriteAMD.close() 
-        fwriteNVD.close()
-        exit(0)
-    result = sp.check_output(['./a.out'])
-    execT_AMD_CPU = float(result)
-    fwriteNVD.write("{}\t{}\n".format(filename, execT_AMD_CPU))
 
-
-    CHostCode("NVD", "CPU", clFile, filename, N, iterations, queue_CHost, argOrder_CHost)
-    fname = filename+"_"+"NVD"+"_main_"+"CPU"+".c"
-    #print fname
-    ret = os.system("gcc {} -l OpenCL -std=c99".format(fname))
-    if (ret != 0):
-        print "{}: Something wrong with COMPILATION! Exit the program!".format(fname)
-        fwriteAMD.close() 
-        fwriteNVD.close()
-        exit(0)
-    result = sp.check_output(['./a.out'])
-    execT_NVD_CPU = float(result)
-    fwriteNVD.write("{}\t{}\n".format(filename, execT_NVD_CPU))
     
 
 # It seems that         
@@ -782,7 +753,40 @@ for clFile in files:
        ): 
         #print "I am here"
         counter += 1
-        continue        
+        continue      
+
+    # Generate C host code for each kernel
+    #print "queue_CHost = ", queue_CHost
+    #print "argOrder_CHost = ", argOrder_CHost
+    CHostCode("AMD", "CPU", clFile, filename, N, iterations, queue_CHost, argOrder_CHost)
+    
+    fname = filename+"_"+"AMD"+"_main_"+"CPU"+".c"
+    #print fname
+    ret = os.system("gcc {} -l OpenCL -std=c99".format(fname))
+    if (ret != 0):
+        print "{}: Something wrong with COMPILATION! Exit the program!".format(fname)
+        fwriteAMD.close() 
+        fwriteNVD.close()
+        exit(0)
+    result = sp.check_output(['./a.out'])
+    execT_AMD_CPU = float(result)
+    fwriteNVD.write("{}\t{}\n".format(filename, execT_AMD_CPU))
+
+
+    CHostCode("NVD", "CPU", clFile, filename, N, iterations, queue_CHost, argOrder_CHost)
+    fname = filename+"_"+"NVD"+"_main_"+"CPU"+".c"
+    #print fname
+    ret = os.system("gcc {} -l OpenCL -std=c99".format(fname))
+    if (ret != 0):
+        print "{}: Something wrong with COMPILATION! Exit the program!".format(fname)
+        fwriteAMD.close() 
+        fwriteNVD.close()
+        exit(0)
+    result = sp.check_output(['./a.out'])
+    execT_NVD_CPU = float(result)
+    fwriteNVD.write("{}\t{}\n".format(filename, execT_NVD_CPU))
+
+  
     '''
     os.system("chmod 777 {}.c".format(filename))
     ret = os.system("gcc {}.c -lm -std=c99".format(filename))
