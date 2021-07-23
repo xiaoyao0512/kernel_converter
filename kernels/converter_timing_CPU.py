@@ -118,10 +118,10 @@ def CHostCode(typ, platform, kernel_fname, filename, N, iterations, queue, argOr
     # The first argument is always the one that is being written
     # This does not need to be initialized    
     # Update v1: This is not true. Have updated it to be Read-writable
-    var_type = queue[0]
-    var_name = argOrder[0]
-    varInitialization(fw, "OpenCL", var_type, var_name, N)
-    for i in range(1, len(queue)):
+    #var_type = queue[0]
+    #var_name = argOrder[0]
+    #varInitialization(fw, "OpenCL", var_type, var_name, N)
+    for i in range(len(queue)):
         cl_type = queue[i]
         cl_argName = argOrder[i]
         #print "cl_type = -{}-, cl_argName = -{}-".format(cl_type, cl_argName)
@@ -148,13 +148,13 @@ def CHostCode(typ, platform, kernel_fname, filename, N, iterations, queue, argOr
     fw.write("\t&device_id, &ret_num_devices);\n")
     fw.write("cl_context context = clCreateContext(NULL, 1, &device_id, NULL, NULL, &ret);\n\n")
     fw.write("cl_command_queue command_queue = clCreateCommandQueue(context, device_id, 0, &ret);\n\n")
-    fw.write("cl_mem {}_mem_obj = clCreateBuffer(context, CL_MEM_READ_WRITE,\n".format(var_name))
-    fw.write("\tLIST_SIZE * sizeof({}), NULL, &ret);\n".format(var_type[:-1]))
-    for i in range(1, len(queue)):
+    #fw.write("cl_mem {}_mem_obj = clCreateBuffer(context, CL_MEM_READ_WRITE,\n".format(var_name))
+    #fw.write("\tLIST_SIZE * sizeof({}), NULL, &ret);\n".format(var_type[:-1]))
+    for i in range(len(queue)):
         cl_type = queue[i]
         cl_argName = argOrder[i]
         if (re.search(r'\*', cl_type)):
-            fw.write("cl_mem {}_mem_obj = clCreateBuffer(context, CL_MEM_READ_ONLY,\n".format(cl_argName))
+            fw.write("cl_mem {}_mem_obj = clCreateBuffer(context, CL_MEM_READ_WRITE,\n".format(cl_argName))
             fw.write("\tLIST_SIZE * sizeof({}), NULL, &ret);\n".format(cl_type[:-1]))          
     for i in range(len(queue)):
         cl_type = queue[i]
@@ -169,8 +169,8 @@ def CHostCode(typ, platform, kernel_fname, filename, N, iterations, queue, argOr
 
     # Set the arguments of the kernel
 
-    fw.write("ret = clSetKernelArg(kernel, 0, sizeof(cl_mem), (void*)&{}_mem_obj);\n".format(var_name))
-    for i in range(1, len(queue)):
+    #fw.write("ret = clSetKernelArg(kernel, 0, sizeof(cl_mem), (void*)&{}_mem_obj);\n".format(var_name))
+    for i in range(len(queue)):
         cl_type = queue[i]
         cl_argName = argOrder[i]
         argIdx = i
@@ -192,7 +192,7 @@ def CHostCode(typ, platform, kernel_fname, filename, N, iterations, queue, argOr
     fw.write("elapsedTime = (t2.tv_sec - t1.tv_sec) * 1000000.0;\n")
     fw.write("elapsedTime += (t2.tv_usec - t1.tv_usec);\n\n")
     #fw.write("{} a = ({})malloc(sizeof({}) * LIST_SIZE);\n".format(var_type, var_type, var_type[:-1]))
-    fw.write("ret = clEnqueueReadBuffer(command_queue, {}_mem_obj, CL_TRUE, 0,\n".format(var_name))
+    #fw.write("ret = clEnqueueReadBuffer(command_queue, {}_mem_obj, CL_TRUE, 0,\n".format(var_name))
     fw.write("\tLIST_SIZE * sizeof({}), {}, 0, NULL, NULL);\n".format(var_type[:-1], var_name))
     fw.write("printf(\"%.4f\", elapsedTime);\n\n")
 
@@ -201,13 +201,13 @@ def CHostCode(typ, platform, kernel_fname, filename, N, iterations, queue, argOr
     fw.write("ret = clReleaseKernel(kernel);\n")
     fw.write("ret = clReleaseProgram(program);\n")
 
-    fw.write("ret = clReleaseMemObject({}_mem_obj);\n".format(var_name))
-    fw.write("free({});\n".format(var_name))
-    for i in range(1, len(queue)):
+    #fw.write("ret = clReleaseMemObject({}_mem_obj);\n".format(var_name))
+    #fw.write("free({});\n".format(var_name))
+    for i in range(len(queue)):
         cl_type = queue[i]
         cl_argName = argOrder[i]
         if (re.search(r'\*', cl_type)):
-            fw.write("ret = clReleaseMemObject({}_mem_obj);\n".format(cl_argName))
+            #fw.write("ret = clReleaseMemObject({}_mem_obj);\n".format(cl_argName))
             fw.write("free({});\n".format(cl_argName))            
     fw.write("ret = clReleaseCommandQueue(command_queue);\n")
     fw.write("ret = clReleaseContext(context);\n\n")
