@@ -1,4 +1,4 @@
-__kernel void A(int a, int b, __global float* c, __global float* d, __global float* e, __global float* f) {
+__kernel void A(__global float* d, __global float* e, __global float* f, int a, int b, __global float* c) {
   const int g = get_global_id(0);
   if (g >= b)
     return;
