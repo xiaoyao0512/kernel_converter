@@ -229,19 +229,6 @@ skipFiles = 0
 
 for clFile in files:
 
-
-
-# npb-3_3-LU-ssor2
-# npb-3_3-SP-initialize1
-# parboil-0_2-stencil-naive_kernel
-# npb-3_3-BT-compute_rhs2
-# npb-3_3-SP-compute_rhs2
-# npb-3_3-SP-add
-# npb-3_3-BT-z_solve2
-# npb-3_3-BT-x_solve2
-# npb-3_3-BT-y_solve2
-# npb-3_3-BT-add
-# npb-3_3-LU-ssor3
     '''
     if (
         clFile != "npb-3.3-BT-exact_rhs1.cl" and
