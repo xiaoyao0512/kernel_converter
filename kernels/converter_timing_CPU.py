@@ -193,7 +193,7 @@ def CHostCode(typ, platform, kernel_fname, filename, N, iterations, queue, argOr
     fw.write("elapsedTime += (t2.tv_usec - t1.tv_usec);\n\n")
     #fw.write("{} a = ({})malloc(sizeof({}) * LIST_SIZE);\n".format(var_type, var_type, var_type[:-1]))
     #fw.write("ret = clEnqueueReadBuffer(command_queue, {}_mem_obj, CL_TRUE, 0,\n".format(var_name))
-    fw.write("\tLIST_SIZE * sizeof({}), {}, 0, NULL, NULL);\n".format(var_type[:-1], var_name))
+    #fw.write("\tLIST_SIZE * sizeof({}), {}, 0, NULL, NULL);\n".format(var_type[:-1], var_name))
     fw.write("printf(\"%.4f\", elapsedTime);\n\n")
 
     fw.write("ret = clFlush(command_queue);\n")
