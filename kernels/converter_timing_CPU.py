@@ -33,7 +33,7 @@ def vecInit(fh, cl_argName, N, typ, number_list, C_or_OpenCL):
         else:
             fh.write("{} {} = ({}) malloc(sizeof({}) * LIST_SIZE);\n".format(typ, cl_argName, typ, typ[:-1]))
             fh.write("for (int {}{}{} = 0; {}{}{} < LIST_SIZE; {}{}{}++)".format(cl_argName, cl_argName, cl_argName, cl_argName, cl_argName, cl_argName, cl_argName, cl_argName, cl_argName) + " {\n")       
-            fh.write("\t{}[{}{}{}] = ({}) (".format(cl_argName, cl_argName, cl_argName, cl_argName, typ))
+            fh.write("\t{}[{}{}{}] = ({}) (".format(cl_argName, cl_argName, cl_argName, cl_argName, typ[:-1]))
             for idx in range(len(number_list)-1):
                 number = number_list[idx]
                 fh.write(" {},".format(number))
@@ -56,7 +56,7 @@ def scalarInit(fh, cl_argName, typ, number_list, C_or_OpenCL):
         if (len(number_list) == 1):
             fh.write("cl_{} {} = {};\n".format(typ, cl_argName, number_list[0]))
         else:
-            fh.write("{} {} = ".format(typ, cl_argName) + "({}) ( ".format(typ))
+            fh.write("{} {} = ".format(typ, cl_argName) + "({}) ( ".format(typ[:-1]))
             for idx in range(len(number_list)-1):
                 number = number_list[idx]
                 fh.write(" {},".format(number))
@@ -73,8 +73,12 @@ def varInitialization(fh, typ, cl_type, cl_argName, N):
     elif (cl_type == "int*" or \
           cl_type == "char*" or cl_type == "short*" or cl_type == "long*"):
         vecInit(fh, cl_argName, N, cl_type, [5], typ)
-    elif (cl_type == "double*" or cl_type == "float*"):
-        vecInit(fh, cl_argName, N, cl_type, [5.0], typ)
+    elif (cl_type == "double*"):
+        vecInit(fh, cl_argName, N, "double*", [5.0], typ)
+    elif (cl_type == "float*" or cl_type == "float2*" or cl_type == "float4*" or cl_type == "float3*"):
+        vecInit(fh, cl_argName, N, "float*", [5.0], typ)
+    elif (cl_type == "char4*"):
+        vecInit(fh, cl_argName, N, "char*", [5.0], typ)
     elif (cl_type == "float2*"):
         vecInit(fh, cl_argName, N, cl_type, [5.0, 5.0], typ)
     elif (cl_type == "int2"):
@@ -513,11 +517,15 @@ for clFile in files:
     argOrder_CHost = []
     while (len(queue) != 0):
         typ = queue.pop(0)
-        queue_CHost.append(typ)
         argName = chr(start)
         argOrder.append(argName)
         argOrder_CHost.append(argName)
         varInitialization(fwC, "C", typ, argName, N)
+        if (typ == "float2*" or typ == "float4*" or typ == "float3*"):
+            typ = "float*"
+        if (typ == "char4*"):
+            typ = "char*"
+        queue_CHost.append(typ)
         '''
         if (re.match('(u?)char.*\*', typ)):
             #argOrder.append(chr(start))
