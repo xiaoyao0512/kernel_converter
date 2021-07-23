@@ -221,6 +221,7 @@ fwriteAMD = open('prog_label_amd_cpu', 'w')
 fwriteNVD = open('prog_label_nvd_cpu', 'w')
 
 counter = 0
+skipFiles = 0
 
 for clFile in files:
 
@@ -769,9 +770,16 @@ for clFile in files:
         fwriteAMD.close() 
         fwriteNVD.close()
         exit(0)
-    result = sp.check_output(['./a.out'])
-    execT_AMD_CPU = float(result)
-    fwriteNVD.write("{}\t{}\n".format(filename, execT_AMD_CPU))
+    result = 0    
+    flag11 = 0
+    try:
+        result = sp.check_output(['./a.out'])
+        flag11 = 1
+    except sp.CalledProcessError as e:
+        skipFiles += 1
+    if (flag11 == 1):
+        execT_AMD_CPU = float(result)
+        fwriteAMD.write("{}\t{}\n".format(filename, execT_AMD_CPU))
 
 
     CHostCode("NVD", "CPU", clFile, filename, N, iterations, queue_CHost, argOrder_CHost)
@@ -783,9 +791,16 @@ for clFile in files:
         fwriteAMD.close() 
         fwriteNVD.close()
         exit(0)
-    result = sp.check_output(['./a.out'])
-    execT_NVD_CPU = float(result)
-    fwriteNVD.write("{}\t{}\n".format(filename, execT_NVD_CPU))
+    result = 0
+    flag22 = 0
+    try:
+        result = sp.check_output(['./a.out'])
+        flag22 = 1
+    except sp.CalledProcessError as e:
+        skipFiles += 1
+    if (flag22 == 1):
+        execT_NVD_CPU = float(result)
+        fwriteNVD.write("{}\t{}\n".format(filename, execT_NVD_CPU))
 
   
     '''
@@ -813,7 +828,7 @@ for clFile in files:
     if (counter == 300):
         break
 
-print "Congrats!"
+print "Congrats! The number of skipped files = {}\n".format(skipFiles)
 fwriteAMD.close() 
 fwriteNVD.close()
 

@@ -771,7 +771,7 @@ for clFile in files:
         exit(0)
     result = sp.check_output(['./a.out'])
     execT_AMD_GPU = float(result)
-    fwriteNVD.write("{}\t{}\n".format(filename, execT_AMD_GPU))
+    fwriteAMD.write("{}\t{}\n".format(filename, execT_AMD_GPU))
 
 
     CHostCode("NVD", "GPU", clFile, filename, N, iterations, queue_CHost, argOrder_CHost)
