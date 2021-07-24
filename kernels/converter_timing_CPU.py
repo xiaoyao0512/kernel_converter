@@ -508,10 +508,13 @@ for clFile in files:
         argOrder.append(argName)
         argOrder_CHost.append(argName)
         varInitialization(fwC, "C", typ, argName, N)
+
         if (typ == "float2*" or typ == "float4*" or typ == "float3*"):
             typ = "float*"
         if (typ == "char4*"):
             typ = "char*"
+        if (typ == "int2*"):
+            typ = "int*"        
         queue_CHost.append(typ)
         '''
         if (re.match('(u?)char.*\*', typ)):
