@@ -73,8 +73,12 @@ def varInitialization(fh, typ, cl_type, cl_argName, N):
     elif (cl_type == "int*" or \
           cl_type == "char*" or cl_type == "short*" or cl_type == "long*"):
         vecInit(fh, cl_argName, N, cl_type, [5], typ)
-    elif (cl_type == "double*" or cl_type == "float*"):
-        vecInit(fh, cl_argName, N, cl_type, [5.0], typ)
+    elif (cl_type == "double*"):
+        vecInit(fh, cl_argName, N, "double*", [5.0], typ)
+    elif (cl_type == "float*" or cl_type == "float2*" or cl_type == "float4*" or cl_type == "float3*"):
+        vecInit(fh, cl_argName, N, "float*", [5.0], typ)
+    elif (cl_type == "char4*"):
+        vecInit(fh, cl_argName, N, "char*", [5.0], typ)
     elif (cl_type == "float2*"):
         vecInit(fh, cl_argName, N, cl_type, [5.0, 5.0], typ)
     elif (cl_type == "int2"):
@@ -114,10 +118,10 @@ def CHostCode(typ, platform, kernel_fname, filename, N, iterations, queue, argOr
     # The first argument is always the one that is being written
     # This does not need to be initialized    
     # Update v1: This is not true. Have updated it to be Read-writable
-    var_type = queue[0]
-    var_name = argOrder[0]
-    varInitialization(fw, "OpenCL", var_type, var_name, N)
-    for i in range(1, len(queue)):
+    #var_type = queue[0]
+    #var_name = argOrder[0]
+    #varInitialization(fw, "OpenCL", var_type, var_name, N)
+    for i in range(len(queue)):
         cl_type = queue[i]
         cl_argName = argOrder[i]
         #print "cl_type = -{}-, cl_argName = -{}-".format(cl_type, cl_argName)
@@ -144,13 +148,13 @@ def CHostCode(typ, platform, kernel_fname, filename, N, iterations, queue, argOr
     fw.write("\t&device_id, &ret_num_devices);\n")
     fw.write("cl_context context = clCreateContext(NULL, 1, &device_id, NULL, NULL, &ret);\n\n")
     fw.write("cl_command_queue command_queue = clCreateCommandQueue(context, device_id, 0, &ret);\n\n")
-    fw.write("cl_mem {}_mem_obj = clCreateBuffer(context, CL_MEM_READ_WRITE,\n".format(var_name))
-    fw.write("\tLIST_SIZE * sizeof({}), NULL, &ret);\n".format(var_type[:-1]))
-    for i in range(1, len(queue)):
+    #fw.write("cl_mem {}_mem_obj = clCreateBuffer(context, CL_MEM_READ_WRITE,\n".format(var_name))
+    #fw.write("\tLIST_SIZE * sizeof({}), NULL, &ret);\n".format(var_type[:-1]))
+    for i in range(len(queue)):
         cl_type = queue[i]
         cl_argName = argOrder[i]
         if (re.search(r'\*', cl_type)):
-            fw.write("cl_mem {}_mem_obj = clCreateBuffer(context, CL_MEM_READ_ONLY,\n".format(cl_argName))
+            fw.write("cl_mem {}_mem_obj = clCreateBuffer(context, CL_MEM_READ_WRITE,\n".format(cl_argName))
             fw.write("\tLIST_SIZE * sizeof({}), NULL, &ret);\n".format(cl_type[:-1]))          
     for i in range(len(queue)):
         cl_type = queue[i]
@@ -165,8 +169,8 @@ def CHostCode(typ, platform, kernel_fname, filename, N, iterations, queue, argOr
 
     # Set the arguments of the kernel
 
-    fw.write("ret = clSetKernelArg(kernel, 0, sizeof(cl_mem), (void*)&{}_mem_obj);\n".format(var_name))
-    for i in range(1, len(queue)):
+    #fw.write("ret = clSetKernelArg(kernel, 0, sizeof(cl_mem), (void*)&{}_mem_obj);\n".format(var_name))
+    for i in range(len(queue)):
         cl_type = queue[i]
         cl_argName = argOrder[i]
         argIdx = i
@@ -188,8 +192,8 @@ def CHostCode(typ, platform, kernel_fname, filename, N, iterations, queue, argOr
     fw.write("elapsedTime = (t2.tv_sec - t1.tv_sec) * 1000000.0;\n")
     fw.write("elapsedTime += (t2.tv_usec - t1.tv_usec);\n\n")
     #fw.write("{} a = ({})malloc(sizeof({}) * LIST_SIZE);\n".format(var_type, var_type, var_type[:-1]))
-    fw.write("ret = clEnqueueReadBuffer(command_queue, {}_mem_obj, CL_TRUE, 0,\n".format(var_name))
-    fw.write("\tLIST_SIZE * sizeof({}), {}, 0, NULL, NULL);\n".format(var_type[:-1], var_name))
+    #fw.write("ret = clEnqueueReadBuffer(command_queue, {}_mem_obj, CL_TRUE, 0,\n".format(var_name))
+    #fw.write("\tLIST_SIZE * sizeof({}), {}, 0, NULL, NULL);\n".format(var_type[:-1], var_name))
     fw.write("printf(\"%.4f\", elapsedTime);\n\n")
 
     fw.write("ret = clFlush(command_queue);\n")
@@ -197,13 +201,13 @@ def CHostCode(typ, platform, kernel_fname, filename, N, iterations, queue, argOr
     fw.write("ret = clReleaseKernel(kernel);\n")
     fw.write("ret = clReleaseProgram(program);\n")
 
-    fw.write("ret = clReleaseMemObject({}_mem_obj);\n".format(var_name))
-    fw.write("free({});\n".format(var_name))
-    for i in range(1, len(queue)):
+    #fw.write("ret = clReleaseMemObject({}_mem_obj);\n".format(var_name))
+    #fw.write("free({});\n".format(var_name))
+    for i in range(len(queue)):
         cl_type = queue[i]
         cl_argName = argOrder[i]
         if (re.search(r'\*', cl_type)):
-            fw.write("ret = clReleaseMemObject({}_mem_obj);\n".format(cl_argName))
+            #fw.write("ret = clReleaseMemObject({}_mem_obj);\n".format(cl_argName))
             fw.write("free({});\n".format(cl_argName))            
     fw.write("ret = clReleaseCommandQueue(command_queue);\n")
     fw.write("ret = clReleaseContext(context);\n\n")
@@ -221,22 +225,10 @@ fwriteAMD = open('prog_label_amd_gpu', 'w')
 fwriteNVD = open('prog_label_nvd_gpu', 'w')
 
 counter = 0
+skipFiles = 0
 
 for clFile in files:
 
-
-
-# npb-3_3-LU-ssor2
-# npb-3_3-SP-initialize1
-# parboil-0_2-stencil-naive_kernel
-# npb-3_3-BT-compute_rhs2
-# npb-3_3-SP-compute_rhs2
-# npb-3_3-SP-add
-# npb-3_3-BT-z_solve2
-# npb-3_3-BT-x_solve2
-# npb-3_3-BT-y_solve2
-# npb-3_3-BT-add
-# npb-3_3-LU-ssor3
     '''
     if (
         clFile != "npb-3.3-BT-exact_rhs1.cl" and
@@ -516,10 +508,13 @@ for clFile in files:
         argOrder.append(argName)
         argOrder_CHost.append(argName)
         varInitialization(fwC, "C", typ, argName, N)
+
         if (typ == "float2*" or typ == "float4*" or typ == "float3*"):
             typ = "float*"
         if (typ == "char4*"):
             typ = "char*"
+        if (typ == "int2*"):
+            typ = "int*"        
         queue_CHost.append(typ)
         '''
         if (re.match('(u?)char.*\*', typ)):
@@ -758,7 +753,7 @@ for clFile in files:
        ): 
         #print "I am here"
         counter += 1
-        continue     
+        continue      
 
     # Generate C host code for each kernel
     #print "queue_CHost = ", queue_CHost
@@ -773,9 +768,16 @@ for clFile in files:
         fwriteAMD.close() 
         fwriteNVD.close()
         exit(0)
-    result = sp.check_output(['./a.out'])
-    execT_AMD_GPU = float(result)
-    fwriteAMD.write("{}\t{}\n".format(filename, execT_AMD_GPU))
+    result = 0    
+    flag11 = 0
+    try:
+        result = sp.check_output(['./a.out'])
+        flag11 = 1
+    except sp.CalledProcessError as e:
+        skipFiles += 1
+    if (flag11 == 1):
+        execT_AMD_GPU = float(result)
+        fwriteAMD.write("{}\t{}\n".format(filename, execT_AMD_GPU))
 
 
     CHostCode("NVD", "GPU", clFile, filename, N, iterations, queue_CHost, argOrder_CHost)
@@ -787,11 +789,18 @@ for clFile in files:
         fwriteAMD.close() 
         fwriteNVD.close()
         exit(0)
-    result = sp.check_output(['./a.out'])
-    execT_NVD_GPU = float(result)
-    fwriteNVD.write("{}\t{}\n".format(filename, execT_NVD_GPU))
+    result = 0
+    flag22 = 0
+    try:
+        result = sp.check_output(['./a.out'])
+        flag22 = 1
+    except sp.CalledProcessError as e:
+        skipFiles += 1
+    if (flag22 == 1):
+        execT_NVD_GPU = float(result)
+        fwriteNVD.write("{}\t{}\n".format(filename, execT_NVD_GPU))
 
-   
+  
     '''
     os.system("chmod 777 {}.c".format(filename))
     ret = os.system("gcc {}.c -lm -std=c99".format(filename))
@@ -817,7 +826,7 @@ for clFile in files:
     if (counter == 300):
         break
 
-print "Congrats!"
+print "Congrats! The number of skipped files = {}\n".format(skipFiles)
 fwriteAMD.close() 
 fwriteNVD.close()
 
