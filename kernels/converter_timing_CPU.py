@@ -228,8 +228,7 @@ counter = 0
 skipFiles = 0
 
 for clFile in files:
-    if (clFile != "amd-app-sdk-3.0-SimpleConvolution-simpleNonSeparableConvolution.cl"):
-        continue
+
     '''
     if (
         clFile != "npb-3.3-BT-exact_rhs1.cl" and
