@@ -113,7 +113,7 @@ def CHostCode(typ, platform, kernel_fname, filename, N, iterations, queue, argOr
     fw.write("#endif\n\n")
     fw.write("#define MAX_SOURCE_SIZE (0x100000)\n\n")
     fw.write("int main(void) {\n\n")
-    fw.write("int i;\n")
+    #fw.write("int i;\n")
     fw.write("const int LIST_SIZE = {};\n".format(iterations))
     # The first argument is always the one that is being written
     # This does not need to be initialized    
