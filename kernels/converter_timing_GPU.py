@@ -513,8 +513,8 @@ for clFile in files:
             typ = "float*"
         if (typ == "char4*"):
             typ = "char*"
-        if (typ == "int2*"):
-            typ = "int*"        
+        if (typ == "int2"):
+            typ = "int"        
         queue_CHost.append(typ)
         '''
         if (re.match('(u?)char.*\*', typ)):

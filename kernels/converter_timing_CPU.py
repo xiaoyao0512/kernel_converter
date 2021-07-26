@@ -228,7 +228,8 @@ counter = 0
 skipFiles = 0
 
 for clFile in files:
-
+    if (clFile != "amd-app-sdk-3.0-SimpleConvolution-simpleNonSeparableConvolution.cl"):
+        continue
     '''
     if (
         clFile != "npb-3.3-BT-exact_rhs1.cl" and
@@ -508,13 +509,12 @@ for clFile in files:
         argOrder.append(argName)
         argOrder_CHost.append(argName)
         varInitialization(fwC, "C", typ, argName, N)
-
         if (typ == "float2*" or typ == "float4*" or typ == "float3*"):
             typ = "float*"
         if (typ == "char4*"):
             typ = "char*"
-        if (typ == "int2*"):
-            typ = "int*"        
+        if (typ == "int2"):
+            typ = "int"        
         queue_CHost.append(typ)
         '''
         if (re.match('(u?)char.*\*', typ)):
