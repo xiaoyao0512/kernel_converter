@@ -125,7 +125,7 @@ def CHostCode(typ, platform, kernel_fname, filename, N, iterations, queue, argOr
         cl_type = queue[i]
         cl_argName = argOrder[i]
         #print "cl_type = -{}-, cl_argName = -{}-".format(cl_type, cl_argName)
-        varInitialization(fw, "OpenCL", cl_type, cl_argName, N)
+        varInitialization(fw, "OpenCL", cl_type, cl_argName, 256*256)
     # Initialization is done
     fw.write("FILE* fp;\n")
     fw.write("char* source_str;\n")
@@ -767,8 +767,8 @@ for clFile in files:
     # Generate C host code for each kernel
     #print "queue_CHost = ", queue_CHost
     #print "argOrder_CHost = ", argOrder_CHost
-    iterations = 4096*2;
-    N = iterations
+    #iterations = 4096*2;
+    #N = iterations
     CHostCode("AMD", "GPU", clFile, filename, N, iterations, queue_CHost, argOrder_CHost)
     
     fname = filename+"_"+"AMD"+"_main_"+"GPU"+".c"
