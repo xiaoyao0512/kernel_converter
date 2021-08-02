@@ -179,8 +179,8 @@ def CHostCode(typ, platform, kernel_fname, filename, N, iterations, queue, argOr
         else:
             fw.write("ret = clSetKernelArg(kernel, {}, sizeof(cl_{}), &{});\n".format(argIdx, cl_type, cl_argName))
 
-    fw.write("size_t global_item_size = 2048;\n")
-    fw.write("size_t local_item_size = 512;\n\n")
+    fw.write("size_t global_item_size = 4096;\n")
+    fw.write("size_t local_item_size = 1024;\n\n")
 
     fw.write("cl_event event;\n")
     fw.write("struct timeval t1, t2;\n")
