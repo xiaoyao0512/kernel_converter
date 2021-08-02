@@ -179,8 +179,8 @@ def CHostCode(typ, platform, kernel_fname, filename, N, iterations, queue, argOr
         else:
             fw.write("ret = clSetKernelArg(kernel, {}, sizeof(cl_{}), &{});\n".format(argIdx, cl_type, cl_argName))
 
-    fw.write("size_t global_item_size = LIST_SIZE;\n")
-    fw.write("size_t local_item_size = {};\n\n".format(N))
+    fw.write("size_t global_item_size = 4096;\n")
+    fw.write("size_t local_item_size = 1024;\n\n")
 
     fw.write("cl_event event;\n")
     fw.write("ret = clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL,\n")
@@ -190,9 +190,9 @@ def CHostCode(typ, platform, kernel_fname, filename, N, iterations, queue, argOr
     
     fw.write("cl_ulong time_start;\n")
     fw.write("cl_ulong time_end;\n")
-    fw.write("clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_START, sizeof(time_start), &time_start, NULL);")
-    fw.write("clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_END, sizeof(time_end), &time_end, NULL);")
-    fw.write("double nanoSeconds = time_end-time_start;")
+    fw.write("clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_START, sizeof(time_start), &time_start, NULL);\n")
+    fw.write("clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_END, sizeof(time_end), &time_end, NULL);\n")
+    fw.write("double nanoSeconds = time_end-time_start;\n")
     fw.write("printf(\"%.4f\", nanoSeconds);\n\n")
 
     fw.write("ret = clFlush(command_queue);\n")
