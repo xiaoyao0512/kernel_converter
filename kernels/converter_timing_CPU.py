@@ -126,7 +126,7 @@ def CHostCode(typ, platform, kernel_fname, filename, N, iterations, queue, argOr
         cl_type = queue[i]
         cl_argName = argOrder[i]
         #print "cl_type = -{}-, cl_argName = -{}-".format(cl_type, cl_argName)
-        varInitialization(fw, "OpenCL", cl_type, cl_argName, 256*256)
+        varInitialization(fw, "OpenCL", cl_type, cl_argName, N)
     # Initialization is done
     fw.write("FILE* fp;\n")
     fw.write("char* source_str;\n")
