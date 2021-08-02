@@ -99,7 +99,7 @@ def CHostCode(typ, platform, kernel_fname, filename, N, iterations, queue, argOr
     assert typ == "AMD" or typ == "NVD", "Please specify a correct type"
     assert platform == "CPU" or platform == "GPU", "Please specify a correct platform"
     assert N != 0 and iterations != 0
-    assert iterations > N
+    assert iterations >= N
     assert len(queue) != 0 and len(queue) == len(argOrder) 
     fname = filename+"_"+typ+"_main_"+platform+".c"
     fw = open(fname, 'w')
@@ -757,6 +757,8 @@ for clFile in files:
     # Generate C host code for each kernel
     #print "queue_CHost = ", queue_CHost
     #print "argOrder_CHost = ", argOrder_CHost
+    iterations = 256*256
+    N = 256*256
     CHostCode("AMD", "GPU", clFile, filename, N, iterations, queue_CHost, argOrder_CHost)
     
     fname = filename+"_"+"AMD"+"_main_"+"GPU"+".c"
