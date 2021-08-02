@@ -67,7 +67,7 @@ def varInitialization(fh, typ, cl_type, cl_argName, N):
     assert typ == "C" or typ == "OpenCL"
     if (cl_type == "int" or \
         cl_type == "char" or cl_type == "short" or cl_type == "long"):
-        scalarInit(fh, cl_argName, cl_type, [2], typ)
+        scalarInit(fh, cl_argName, cl_type, [100], typ)
     elif (cl_type == "double" or cl_type == "float"):
         scalarInit(fh, cl_argName, cl_type, [1.0], typ)
     elif (cl_type == "int*" or \
@@ -757,8 +757,6 @@ for clFile in files:
     # Generate C host code for each kernel
     #print "queue_CHost = ", queue_CHost
     #print "argOrder_CHost = ", argOrder_CHost
-    iterations = 256*256
-    N = 256*256
     CHostCode("AMD", "GPU", clFile, filename, N, iterations, queue_CHost, argOrder_CHost)
     
     fname = filename+"_"+"AMD"+"_main_"+"GPU"+".c"
