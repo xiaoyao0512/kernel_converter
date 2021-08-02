@@ -768,6 +768,7 @@ for clFile in files:
     #print "queue_CHost = ", queue_CHost
     #print "argOrder_CHost = ", argOrder_CHost
     iterations = 4096*2;
+    N = iterations
     CHostCode("AMD", "GPU", clFile, filename, N, iterations, queue_CHost, argOrder_CHost)
     
     fname = filename+"_"+"AMD"+"_main_"+"GPU"+".c"
