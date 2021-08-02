@@ -100,7 +100,7 @@ def CHostCode(typ, platform, kernel_fname, filename, N, iterations, queue, argOr
     assert typ == "AMD" or typ == "NVD", "Please specify a correct type"
     assert platform == "CPU" or platform == "GPU", "Please specify a correct platform"
     assert N != 0 and iterations != 0
-    assert iterations > N
+    assert iterations >= N
     assert len(queue) != 0 and len(queue) == len(argOrder) 
     fname = filename+"_"+typ+"_main_"+platform+".c"
     fw = open(fname, 'w')
@@ -126,7 +126,7 @@ def CHostCode(typ, platform, kernel_fname, filename, N, iterations, queue, argOr
         cl_type = queue[i]
         cl_argName = argOrder[i]
         #print "cl_type = -{}-, cl_argName = -{}-".format(cl_type, cl_argName)
-        varInitialization(fw, "OpenCL", cl_type, cl_argName, N)
+        varInitialization(fw, "OpenCL", cl_type, cl_argName, 256*256)
     # Initialization is done
     fw.write("FILE* fp;\n")
     fw.write("char* source_str;\n")
@@ -148,7 +148,7 @@ def CHostCode(typ, platform, kernel_fname, filename, N, iterations, queue, argOr
     fw.write("ret = clGetDeviceIDs(platform_id, CL_DEVICE_TYPE_{}, 1,\n".format(platform))
     fw.write("\t&device_id, &ret_num_devices);\n")
     fw.write("cl_context context = clCreateContext(NULL, 1, &device_id, NULL, NULL, &ret);\n\n")
-    fw.write("cl_command_queue command_queue = clCreateCommandQueue(context, device_id, 0, &ret);\n\n")
+    fw.write("cl_command_queue command_queue = clCreateCommandQueue(context, device_id, CL_QUEUE_PROFILING_ENABLE, &ret);\n\n")
     #fw.write("cl_mem {}_mem_obj = clCreateBuffer(context, CL_MEM_READ_WRITE,\n".format(var_name))
     #fw.write("\tLIST_SIZE * sizeof({}), NULL, &ret);\n".format(var_type[:-1]))
     for i in range(len(queue)):
@@ -180,22 +180,31 @@ def CHostCode(typ, platform, kernel_fname, filename, N, iterations, queue, argOr
         else:
             fw.write("ret = clSetKernelArg(kernel, {}, sizeof(cl_{}), &{});\n".format(argIdx, cl_type, cl_argName))
 
-    fw.write("size_t global_item_size = LIST_SIZE;\n")
-    fw.write("size_t local_item_size = {};\n\n".format(N))
+    fw.write("size_t global_item_size = 4096*8;\n")
+    fw.write("size_t local_item_size = 1024;\n\n")
 
+    fw.write("cl_event event;\n")
     fw.write("struct timeval t1, t2;\n")
     fw.write("gettimeofday(&t1, NULL);\n")
     fw.write("ret = clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL,\n")
-    fw.write("\t&global_item_size, &local_item_size, 0, NULL, NULL);\n")
-    fw.write("ret = clFinish(command_queue);\n")
+    fw.write("\t&global_item_size, &local_item_size, 0, NULL, &event);\n")
+    fw.write("clWaitForEvents(1, &event);\n")
+    fw.write("clFinish(command_queue);\n\n")
     fw.write("gettimeofday(&t2, NULL);\n\n")
     fw.write("double elapsedTime;\n")
     fw.write("elapsedTime = (t2.tv_sec - t1.tv_sec) * 1000000.0;\n")
     fw.write("elapsedTime += (t2.tv_usec - t1.tv_usec);\n\n")
-    #fw.write("{} a = ({})malloc(sizeof({}) * LIST_SIZE);\n".format(var_type, var_type, var_type[:-1]))
-    #fw.write("ret = clEnqueueReadBuffer(command_queue, {}_mem_obj, CL_TRUE, 0,\n".format(var_name))
-    #fw.write("\tLIST_SIZE * sizeof({}), {}, 0, NULL, NULL);\n".format(var_type[:-1], var_name))
-    fw.write("printf(\"%.4f\", elapsedTime);\n\n")
+    
+    fw.write("cl_ulong time_start;\n")
+    fw.write("cl_ulong time_end;\n")
+    fw.write("clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_START, sizeof(time_start), &time_start, NULL);\n")
+    fw.write("clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_END, sizeof(time_end), &time_end, NULL);\n")
+    fw.write("double nanoSeconds = time_end-time_start;\n")
+    fw.write("if (nanoSeconds < 0.0001) {\n")
+    fw.write("printf(\"%.4f\", elapsedTime);\n")
+    fw.write("} else {\n")
+    fw.write("printf(\"%.4f\", nanoSeconds);\n")
+    fw.write("}\n\n")
 
     fw.write("ret = clFlush(command_queue);\n")
     fw.write("ret = clFinish(command_queue);\n")
