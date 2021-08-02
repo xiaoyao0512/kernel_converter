@@ -67,12 +67,12 @@ def varInitialization(fh, typ, cl_type, cl_argName, N):
     assert typ == "C" or typ == "OpenCL"
     if (cl_type == "int" or \
         cl_type == "char" or cl_type == "short" or cl_type == "long"):
-        scalarInit(fh, cl_argName, cl_type, [2], typ)
+        scalarInit(fh, cl_argName, cl_type, [100], typ)
     elif (cl_type == "double" or cl_type == "float"):
         scalarInit(fh, cl_argName, cl_type, [1.0], typ)
     elif (cl_type == "int*" or \
           cl_type == "char*" or cl_type == "short*" or cl_type == "long*"):
-        vecInit(fh, cl_argName, N, cl_type, [100], typ)
+        vecInit(fh, cl_argName, N, cl_type, [5.0], typ)
     elif (cl_type == "double*"):
         vecInit(fh, cl_argName, N, "double*", [5.0], typ)
     elif (cl_type == "float*" or cl_type == "float2*" or cl_type == "float4*" or cl_type == "float3*"):
